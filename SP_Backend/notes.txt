@@ -1,0 +1,53 @@
+
+## create feedback
+curl -X POST http://localhost:8000/api/feedback/ \
+     -H 'Authorization: Token cc2c7a1d99a36f4bbdd92cb937170ff93e6d6252' \
+     -H 'Content-Type: application/json' \
+     -d '{"ticket":"2","rating":"4","comment":"testcomment"}'
+
+## Get tickets
+curl -X POST http://localhost:8000/api/feedback/ \
+     -H 'Authorization: Token cc2c7a1d99a36f4bbdd92cb937170ff93e6d6252' \
+     -H 'Content-Type: application/json' \
+     -d '{"userId":"2"}'
+     
+##Create login token
+curl -X POST http://localhost:8080/api-token-auth/ \
+     -H 'Content-Type: application/json' \
+     -d '{"username": "curltest", "password": "fuckTh1sShit"}'
+
+##login token
+{"token":"cc2c7a1d99a36f4bbdd92cb937170ff93e6d6252"}
+
+
+curl -X GET http://localhost:8000/api/feedback/2/ -H "Authorization: Token cc2c7a1d99a36f4bbdd92cb937170ff93e6d6252"
+
+##Partial updates
+curl -X PATCH http://localhost:8000/api/tickets/updt/1/ \
+     -H 'Authorization: Token cc2c7a1d99a36f4bbdd92cb937170ff93e6d6252' \
+     -H 'Content-Type: application/json' \
+     -d '{"assignTo": "Mike"}'
+
+
+
+
+/////
+I have this django view;
+
+class TicketListByUser(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TicketSerializer
+    
+    def get_queryset(self):
+        queryset = Ticket.objects.all()
+        user_id = self.request.query_params.get('userId', None)
+        if user_id is not None:
+            queryset = queryset.filter(user__id=user_id)
+        return queryset
+
+
+going to this api endpoint
+
+localhost:8080/api/tickets/by_user/
+
+it will retrieve this json
