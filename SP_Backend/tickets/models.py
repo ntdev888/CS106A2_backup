@@ -33,7 +33,12 @@ class Priority(models.TextChoices):
     MEDIUM = "Medium", "Medium"
     HIGH = "High", "High"
 
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.name
 
 class Ticket(models.Model):
     title = models.CharField(max_length=255)
@@ -44,12 +49,12 @@ class Ticket(models.Model):
     assignTo = models.CharField(max_length=5, choices=AssignTo.choices, default=AssignTo.BLANK)  
     contactMe = models.CharField(max_length=8, choices=ContactBy.choices, default=ContactBy.EMAIL)  
     area = models.CharField(max_length=10, choices=IssueArea.choices, default=IssueArea.BLANK)  
-    priority = models.CharField(max_length=6, choices=Priority.choices, default=Priority.LOW)  
+    priority = models.CharField(max_length=6, choices=Priority.choices, default=Priority.LOW) 
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='tickets') 
 
     def __str__(self):
         return self.title
     
-
 
 class Feedback(models.Model):
     ticket = models.OneToOneField(Ticket, on_delete=models.CASCADE, related_name='feedback')
@@ -70,4 +75,12 @@ class InternalNote(models.Model):
 
     def __str__(self):
         return f"Note for Ticket ID {self.ticket_id} - Created by {self.created_by}"
+    
+class Resolution(models.Model):
+    ticket = models.OneToOneField(Ticket, on_delete=models.CASCADE, related_name='resolution')
+    resolved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='resolved_tickets')
+    resolution_steps = models.TextField()
+    resolution_date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Resolution for Ticket ID {self.ticket_id}"

@@ -1,12 +1,30 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, CreateAPIView
 from django.contrib.auth.models import User
 from rest_framework import status, generics
 from .models import Ticket, Feedback, InternalNote
 from .serializers import TicketSerializer, UserSerializer, FeedbackSerializer
 from rest_framework.permissions import IsAuthenticated
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_id(request):
+    username = request.query_params.get('username', None)
+    if username is not None:
+        try:
+            user = User.objects.get(username=username)
+            return Response({'user_id': user.id}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    return Response({'error': 'Username not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 

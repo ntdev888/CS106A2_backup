@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import TicketCreate, TicketList, TicketDetail, CreateUserView, TicketUpdate, TicketListByUser, FeedbackCreate, FeedbackDetail, FeedbackListByUser, FeedbackByAssignTo
-from .views import FeedbackUpdateView
+from .views import FeedbackUpdateView, get_user_id
 
 urlpatterns = [
     path('api/users/', CreateUserView.as_view(), name='create-user'),
@@ -14,4 +14,5 @@ urlpatterns = [
     path('api/feedback/user/<int:user_id>/', FeedbackListByUser.as_view(), name='feedback-by-user'),
     path('api/feedback/assignee/<int:assignee_id>/', FeedbackByAssignTo.as_view(), name='feedback-by-assignee'),
     path('api/feedback/<int:ticket_id>/', FeedbackUpdateView.as_view(), name='feedback-update'),
+    path('api/get-user-id/', get_user_id, name='get-user-id'),
 ]
