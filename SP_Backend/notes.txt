@@ -38,8 +38,17 @@ curl -X PATCH http://localhost:8080/api/tickets/updt/1/ \
      -H 'Content-Type: application/json' \
      -d '{"assignTo": "Mike"}'
 
+##Catergory testing
+curl -X POST http://localhost:8080/api/categories/ \
+     -H 'Content-Type: application/json' \
+     -d '{"name": "Technical Support", "description": "Issues related to technical problems with our software."}'
+
+
 taunic
 N1c@Y00B33
+
+mattt
+matt@Y00B33
 
 
 /////

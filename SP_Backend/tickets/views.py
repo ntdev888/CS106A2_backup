@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView, CreateAPIView
 from django.contrib.auth.models import User
 from rest_framework import status, generics
-from .models import Ticket, Feedback, InternalNote
-from .serializers import TicketSerializer, UserSerializer, FeedbackSerializer
+from .models import Ticket, Feedback, InternalNote, Category, Resolution
+from .serializers import TicketSerializer, UserSerializer, FeedbackSerializer, CategorySerializer, ResolutionSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -108,3 +108,41 @@ class FeedbackUpdateView(RetrieveUpdateAPIView):
     def get_object(self):
         ticket_id = self.kwargs.get("ticket_id")
         return Feedback.objects.get(ticket__id=ticket_id)
+    
+
+class CategoryCreateView(CreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+class CategoryListView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+class CategoryDetailView(RetrieveAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+
+class ResolutionCreateView(CreateAPIView):
+    queryset = Resolution.objects.all()
+    serializer_class = ResolutionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(resolved_by=self.request.user)
+
+class ResolutionRetrieveView(RetrieveAPIView):
+    queryset = Resolution.objects.all()
+    serializer_class = ResolutionSerializer
+    permission_classes = [IsAuthenticated]
+
+class ResolutionUpdateView(RetrieveUpdateAPIView):
+    queryset = Resolution.objects.all()
+    serializer_class = ResolutionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
